@@ -1,3 +1,6 @@
+.bloop/
+.metals/
+.sbt-hydra-history
+project/.bloop/
+src/main/resources
 target/
-.ensime
-.ensime_cache/
