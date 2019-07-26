@@ -1,50 +1,40 @@
 package gelatinous
 
 import java.io.IOException
-import java.nio.file.{FileVisitResult, Files, Path, Paths, SimpleFileVisitor}
+import java.nio.file.{FileVisitResult, Files, Path, SimpleFileVisitor}
 import java.nio.file.attribute.BasicFileAttributes
 
 class Gelatinous(
-    sourceDir: String = "src/main/resources",
-    buildDir: String = "target/site",
-    rootDir: String = "."
+    sourcePath: Path,
+    targetPath: Path,
 ) {
-  val sourcePath = Paths.get(rootDir, sourceDir)
-  val buildPath = Paths.get(rootDir, buildDir)
-
   def build() = {
-
-    cleanDirectory(buildPath)
-
-    // val html = new BaseTemplate("Hello").pretty
-    val template = new Template()
-    val html = template.pretty
-
-    val indexFile = buildPath.resolve("index.html")
-    Files.createFile(indexFile)
-    Files.write(indexFile, html.getBytes)
-
+    cleanDirectory(targetPath)
     Files.walkFileTree(
       sourcePath,
       new SimpleFileVisitor[Path] {
-        override def visitFile(file: Path, attrs: BasicFileAttributes) =
+        override def visitFile(file: Path, attrs: BasicFileAttributes) = {
           file match {
-            case f if f.getFileName.toString.toLowerCase.endsWith(".md") =>
-              processMarkdown(f)
+            case f if checkFileEndsWith(f, ".md") => processMarkdown(f)
             case f => processStatic(f)
           }
+          FileVisitResult.CONTINUE
+        }
       }
     )
   }
 
   def processMarkdown(path: Path) = {
     println(f"$path")
-    FileVisitResult.CONTINUE
   }
 
   def processStatic(path: Path) = {
-    Files.copy(path, this.buildPath)
+    Files.copy(path, this.targetPath)
     FileVisitResult.CONTINUE
+  }
+
+  private def checkFileEndsWith(file: Path, extension: String) = {
+    file.getFileName.toString.toLowerCase.endsWith(extension)
   }
 
   private def cleanDirectory(dir: Path): Path = {

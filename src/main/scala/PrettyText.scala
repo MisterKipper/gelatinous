@@ -1,11 +1,14 @@
 package gelatinous
 
-abstract class PrettyText {
-  val myHtml: scalatags.Text.TypedTag[String]
+import scalatags.Text.TypedTag
+import scalatags.text.Builder
 
-  implicit class PrettyTypedTag[+Output <: String](tt: scalatags.Text.TypedTag[Output]) {
+trait PrettyText {
+  val myHtml: PrettyTypedTag
+
+  implicit class PrettyTypedTag(tt: TypedTag[String]) {
     def prettyWriteTo(strb: StringBuilder, depth: Int): StringBuilder = {
-      val builder = new scalatags.text.Builder()
+      val builder = new Builder()
       tt.build(builder)
       val indent = "  " * depth
       strb ++= indent += '<' ++= tt.tag
@@ -26,7 +29,7 @@ abstract class PrettyText {
         var i = 0
         while (i < builder.childIndex) {
           builder.children(i) match {
-            case t: scalatags.Text.TypedTag[String] =>
+            case t: PrettyTypedTag =>
               strb += '\n'
               t.prettyWriteTo(strb, depth + 1)
             case any =>
