@@ -38,13 +38,15 @@ lazy val commonSettings = Seq(
     "-Ywarn-value-discard",
     // "-Yno-predef",  // no automatic import of Predef (removes irritating implicits)
     // "-Yno-imports"  // no automatic imports at all; all symbols must be imported explicitly
+    // "-P:silencer:checkUnused",
     ),
-  // (scalacOptions in (Compile, console)) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"),
+  (scalacOptions in (Compile, console)) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"),
   // (scalacOptions in (Test, run)) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"),
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "3.0.8" % Test,
     "org.scala-lang.modules" %% "scala-xml" % "1.2.0",
     "com.lihaoyi" %% "scalatags" % "0.7.0",
+    "com.davegurnell" % "spandoc_2.12" % "0.2.0"
     )
 )
 

@@ -1,40 +1,30 @@
 package gelatinous
 
 import java.io.IOException
-import java.nio.file.{FileVisitResult, Files, Path, SimpleFileVisitor}
+import java.nio.file.{FileVisitResult, Files, Path, Paths, SimpleFileVisitor}
 import java.nio.file.attribute.BasicFileAttributes
 
 class Gelatinous(
-    sourcePath: Path,
-    targetPath: Path,
+    sourceDir: String,
+    targetDir: String,
+    manifest: Manifest
 ) {
+  val sourcePath = Paths.get(sourceDir)
+  val targetPath = Paths.get(targetDir)
+
   def build() = {
     cleanDirectory(targetPath)
-    Files.walkFileTree(
-      sourcePath,
-      new SimpleFileVisitor[Path] {
-        override def visitFile(file: Path, attrs: BasicFileAttributes) = {
-          file match {
-            case f if checkFileEndsWith(f, ".md") => processMarkdown(f)
-            case f => processStatic(f)
-          }
-          FileVisitResult.CONTINUE
-        }
+
+    manifest.singlePages.foreach(
+      page => {
+        val html = page.myHtml.render // pretty
+        val filePath = targetPath.resolve(page.url)
+        Files.createFile(filePath)
+        Files.write(filePath, html.getBytes)
       }
     )
-  }
 
-  def processMarkdown(path: Path) = {
-    println(f"$path")
-  }
-
-  def processStatic(path: Path) = {
-    Files.copy(path, this.targetPath)
-    FileVisitResult.CONTINUE
-  }
-
-  private def checkFileEndsWith(file: Path, extension: String) = {
-    file.getFileName.toString.toLowerCase.endsWith(extension)
+    // Files.walkFileTree(sourcePath, new SourceVisitor(targetPath))
   }
 
   private def cleanDirectory(dir: Path): Path = {

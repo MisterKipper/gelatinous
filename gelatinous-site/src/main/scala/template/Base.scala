@@ -1,13 +1,15 @@
-package gelatinous.site
+package gelatinous.site.template
+
+import gelatinous.Text
 
 trait Base extends gelatinous.Template {
-  import scalatags.Text.all._
+  import Text.all._
   val pageTitle: String
   lazy val myHtml = {
     html(lang := "en")(
       head(
         meta(charset := "utf-8"),
-        title(pageTitle + " - Kyle's junk"),
+        Text.tags2.title(pageTitle + " - Kyle's junk"),
         link(rel := "shortcut icon", tpe := "image/png", href := urlFor("static", "favicon.png")),
         link(rel := "icon", tpe := "image/png", href := urlFor("static", "favicon.png")),
         meta(name := "viewport", content := "width=device-width, initial-scale=1.0"),
@@ -15,7 +17,7 @@ trait Base extends gelatinous.Template {
       ),
       body(
         header(
-          nav(
+          Text.tags2.nav(
             ul(
               li(a(href := "index.html")("kyledavi.es")),
               li(a(href := "blog.html")("Blog")),
@@ -24,10 +26,7 @@ trait Base extends gelatinous.Template {
             )
           )
         ),
-        main(
-          h1(pageTitle),
-          pageContent()
-        ),
+        Text.tags2.main(pageContent()),
         footer("&copy; 2019 Kyle F. Davies"),
         pageScripts()
       )
