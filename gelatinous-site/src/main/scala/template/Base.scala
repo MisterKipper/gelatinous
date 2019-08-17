@@ -1,6 +1,6 @@
 package gelatinous.site.template
 
-import gelatinous.Text
+import scalatags.Text
 
 trait Base extends gelatinous.Template {
   import Text.all._
@@ -10,8 +10,8 @@ trait Base extends gelatinous.Template {
       head(
         meta(charset := "utf-8"),
         Text.tags2.title(pageTitle + " - Kyle's junk"),
-        link(rel := "shortcut icon", tpe := "image/png", href := urlFor("static", "favicon.png")),
-        link(rel := "icon", tpe := "image/png", href := urlFor("static", "favicon.png")),
+        link(rel := "shortcut icon", tpe := "image/png", href := urlFor(".", "favicon.png")),
+        link(rel := "icon", tpe := "image/png", href := urlFor(".", "favicon.png")),
         meta(name := "viewport", content := "width=device-width, initial-scale=1.0"),
         pageStyles()
       ),
@@ -27,7 +27,7 @@ trait Base extends gelatinous.Template {
           )
         ),
         Text.tags2.main(pageContent()),
-        footer("&copy; 2019 Kyle F. Davies"),
+        footer(RawFrag("&copy; 2019 Kyle F. Davies")),
         pageScripts()
       )
     )
@@ -35,12 +35,12 @@ trait Base extends gelatinous.Template {
 
   override def pageStyles(): Frag = {
     frag(
-      link(rel := "stylesheet", href := urlFor("static", "css/styles.css")),
-      link(rel := "stylesheet", href := urlFor("static", "css/fonts.css"))
+      link(rel := "stylesheet", href := urlFor("css", "styles.css")),
+      link(rel := "stylesheet", href := urlFor("css", "fonts.css"))
     )
   }
 
   override def pageScripts(): Frag = {
-    script(src := urlFor("static", "js/scripts.js"))
+    script(src := urlFor("js", "scripts.js"))
   }
 }

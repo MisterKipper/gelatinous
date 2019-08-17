@@ -1,48 +1,34 @@
 package gelatinous.site.template
 
-import gelatinous.Text
+import scalatags.Text
 
-class Post(markdown: String) extends Base {
+import gelatinous.{ArticleCollection, Article, Index, PrettyText}
+import gelatinous.site.Manifest
+
+class Post(data: List[String]) extends Article(data) with PrettyText {
   import Text.all._
-  type Metadata = Map[String, String]
-  val metadataDelimiter = "----"
-  val (metadata, mainHtml) = parseMarkdown(markdown)
-  val pageTitle = metadata("title")
-  val url = "posts/"
-
-  def parseMarkdown(markdown: String): (Metadata, Frag) = {
-    val sections = markdown.split(metadataDelimiter)
-    val metadata = parseMetadata(sections(1))
-    val bodyHtml = toScalatags(sections.slice(2, sections.size).reduce(_ + _))
-    (metadata, bodyHtml)
-  }
-
-  def parseMetadata(metadata: String): Metadata = {
-    Map.from(metadata
-               .linesIterator
-               .map(line => line.split(":").map(_.trim))
-               .map(a => a(0) -> a(1)))
-  }
-
-  override def pageContent = {
-    mainHtml
-  }
-
-  def toScalatags(markdown: String): Frag = {
-    // TODO: Proper parser (or use pandoc?)
-    def stupidParser(lines: Iterator[String], tags: Frag): Frag = lines.next match {
-      case l if l.startsWith("# ") => frag(tags, h1(l.slice(2, l.size)))
-      case l => frag(tags, p(l))
-    }
-    stupidParser(markdown.linesIterator, frag())
-  }
-
-  def digest: Digest = {
-    // How to manipulate a scalatags Frag??
-    new Digest(this)
+  import Text.tags2.article
+  val htmlFrag = processInput(data)
+  val pageTitle = data(3).split(": ")(1)
+  val route = PostCollection.baseRoute + slug
+  def slug = pageTitle.toLowerCase.replace(' ', '-') + ".html"
+  def render = htmlFrag.pretty
+  def processInput(lines: List[String]) = article(h2(data(0)), p(data(1)), p(data(2)))
+  def digest: Frag = {
+    article(h2("TODO"), p("TODO"), p("TODO"))
   }
 }
 
-object Post {
-  def apply(markdown: String) = new Post(markdown)
+object PostCollection extends ArticleCollection {
+  val sourceDir = Manifest.sourceDir + "posts/"
+  val baseRoute = "blog/"
+  val indexPage = PostIndex
+  def createArticle(lines: List[String]) = new Post(lines)
+}
+
+object PostIndex extends Base with Index {
+  import scalatags.Text.all._
+  val route = "blog.html"
+  val pageTitle = "Blog"
+  def pageContent = PostCollection.articles.map(_.digest)
 }

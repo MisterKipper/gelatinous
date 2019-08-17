@@ -1,3 +1,0 @@
-package gelatinous
-
-class Collection {}

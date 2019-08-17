@@ -46,7 +46,8 @@ lazy val commonSettings = Seq(
     "org.scalatest" %% "scalatest" % "3.0.8" % Test,
     "org.scala-lang.modules" %% "scala-xml" % "1.2.0",
     "com.lihaoyi" %% "scalatags" % "0.7.0",
-    "com.davegurnell" % "spandoc_2.12" % "0.2.0"
+    "com.davegurnell" % "spandoc_2.12" % "0.2.0",
+    "com.atlassian.commonmark" % "commonmark" % "0.13.0"
     )
 )
 

@@ -1,15 +1,17 @@
 package gelatinous.site.template
 
 // import gelatinous.site.Pagination
+import scalatags.Text
 
 class Index(posts: List[Digest]) extends Base {
-  import gelatinous.Text.all._
+  import Text.all._
   val pageTitle = "Home"
-  val url = "index.html"
+  val route = "index.html"
   // val pagination = Pagination(posts, "index")
   override def pageContent = {
     // pagination.makePage(0)
-    ul(posts.map(_.myHtml))
+    val allHtml = posts.map(_.myHtml)
+    ul(allHtml)
   }
 }
 

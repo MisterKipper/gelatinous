@@ -1,7 +1,8 @@
 package gelatinous
 
-import Text.Frag
+import scalatags.Text.TypedTag
 
-trait FragmentTemplate {
-  val myHtml: Frag
+trait FragmentTemplate extends PrettyText {
+  val myHtml: TypedTag[String]
+  def render = myHtml.pretty
 }
