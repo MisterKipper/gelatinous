@@ -40,7 +40,7 @@ lazy val commonSettings = Seq(
     // "-Yno-imports"  // no automatic imports at all; all symbols must be imported explicitly
     // "-P:silencer:checkUnused",
     ),
-  (scalacOptions in (Compile, console)) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"),
+  (scalacOptions in (Compile, console)) --= Seq("-Ywarn-unused", "-Xfatal-warnings"),
   // (scalacOptions in (Test, run)) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"),
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "3.0.8" % Test,
