@@ -1,9 +1,10 @@
 package gelatinous
 
-import scalatags.Text.{Frag, TypedTag}
+// import scalatags.Text.{Frag, TypedTag}
+import scalatags.Text.all.Frag
 
 trait Template extends PrettyText {
-  val myHtml: TypedTag[String]
+  val myHtml: Frag  // TypedTag[String]
   val route: String
   def pageStyles(): Frag
   def pageContent(): Frag

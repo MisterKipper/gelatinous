@@ -1,23 +1,37 @@
 package gelatinous.site.template
 
-// import org.commonmark.parser.Parser
-import scalatags.Text
+import scala.jdk.CollectionConverters._
 
-import gelatinous.{ArticleCollection, Article, Index, PrettyText}
+import org.commonmark.parser.Parser
+import org.commonmark.ext.front.matter.YamlFrontMatterExtension
+
+import gelatinous.{Article, ArticleCollection, Index, PrettyText}
 import gelatinous.site.Manifest
+import gelatinous.site.util.ScalatagsVisitor
+import org.commonmark.ext.front.matter.YamlFrontMatterVisitor
 
 class Post(data: List[String]) extends Article(data) with PrettyText {
-  import Text.all._
-  import Text.tags2.article
-  val htmlFrag = processInput(data)
-  val pageTitle = data(3).split(": ")(1)
-  val route = PostCollection.baseRoute + slug
-  def slug = pageTitle.toLowerCase.replace(' ', '-') + ".html"
-  def render = htmlFrag.pretty
-  def processInput(lines: List[String]) = article(h2(data(0)), p(data(1)), p(data(2)))
-  def digest: Frag = {
-    article(h2("TODO"), p("TODO"), p("TODO"))
+  val parser = Parser
+    .builder()
+    .extensions(List(YamlFrontMatterExtension.create()).asJava)
+    .build()
+  val mdParsed = parser.parse(data.reduce((result, line) => result + '\n' ++ line))
+  def processInput = {
+    val metadataVisitor = new YamlFrontMatterVisitor
+    mdParsed.accept(metadataVisitor)
+    val metadata = metadataVisitor.getData().asScala.view.mapValues(_.asScala(0)).toMap
+    val postHtml = ScalatagsVisitor.walkTree(mdParsed)
+    (metadata, postHtml)
   }
+  val (metadata, postHtml) = processInput
+  val digest = {
+    ScalatagsVisitor.walkTree(mdParsed, Some(3))
+  }
+  println(digest.render)
+  val pageTitle = metadata("title")
+  val slug = pageTitle.toLowerCase.replace(' ', '-')
+  val route = PostCollection.baseRoute + slug + ".html"
+  def render = postHtml.pretty
 }
 
 object PostCollection extends ArticleCollection {
@@ -29,7 +43,7 @@ object PostCollection extends ArticleCollection {
 
 object PostIndex extends Base with Index {
   import scalatags.Text.all._
-  val route = "blog.html"
+  val route = "index.html"
   val pageTitle = "Blog"
   def pageContent = PostCollection.articles.map(_.digest)
 }

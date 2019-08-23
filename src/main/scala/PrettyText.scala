@@ -4,7 +4,7 @@ import scalatags.Text.TypedTag
 import scalatags.text.Builder
 
 trait PrettyText {
-  implicit class PrettyTypedTag(tt: TypedTag[String]) {
+  implicit class PrettyTypedTag(tt: scalatags.Text.TypedTag[String]) {
     def prettyWriteTo(strb: StringBuilder, depth: Int): StringBuilder = {
       val builder = new Builder()
       tt.build(builder)
@@ -44,6 +44,13 @@ trait PrettyText {
       val strb = new StringBuilder
       prettyWriteTo(strb, 0)
       strb.toString()
+    }
+  }
+
+  implicit class PrettyFrag(f: scalatags.Text.all.Frag) {
+    def pretty: String = f match {
+      case f: TypedTag[String] => f.pretty
+      case f: Any => f.render
     }
   }
 }

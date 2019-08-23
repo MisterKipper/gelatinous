@@ -1,11 +1,11 @@
 package gelatinous
 
-import scalatags.Text
+import scalatags.Text.all.Frag
 
 abstract case class Article(data: List[String]) {
+  type Metadata = Map[String, String]
   val route: String
-  processInput(data)
-  def processInput(data: List[String]): Text.Frag
+  def processInput: (Metadata, Frag)
   def render: String
-  def digest: Text.Frag
+  val digest: Frag
 }

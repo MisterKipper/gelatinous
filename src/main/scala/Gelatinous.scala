@@ -11,10 +11,10 @@ class Gelatinous(manifest: Manifest) {
   def build() = {
     cleanDirectory(targetPath)
 
-    val path = manifest.assetPath
-    val assetRoute = targetPath.resolve(path.resolve(".."))
+    val assetSource = manifest.assetPath
+    val assetRoute = targetPath.resolve(assetSource.resolve("..")) // HACK
     Files.createDirectories(assetRoute)
-    Files.walkFileTree(sourcePath.resolve(path), new AssetCopier(assetRoute))
+    Files.walkFileTree(sourcePath.resolve(assetSource), new AssetCopier(assetRoute))
 
     manifest.standalonePages.foreach(
       page => {
