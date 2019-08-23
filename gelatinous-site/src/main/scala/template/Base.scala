@@ -10,8 +10,8 @@ trait Base extends gelatinous.Template {
       head(
         meta(charset := "utf-8"),
         Text.tags2.title(pageTitle + " - Kyle's junk"),
-        link(rel := "shortcut icon", tpe := "image/png", href := urlFor(".", "favicon.png")),
-        link(rel := "icon", tpe := "image/png", href := urlFor(".", "favicon.png")),
+        link(rel := "shortcut icon", tpe := "image/png", href := urlFor("", "favicon.png")),
+        link(rel := "icon", tpe := "image/png", href := urlFor("", "favicon.png")),
         meta(name := "viewport", content := "width=device-width, initial-scale=1.0"),
         pageStyles()
       ),
@@ -19,10 +19,10 @@ trait Base extends gelatinous.Template {
         header(
           Text.tags2.nav(
             ul(
-              li(a(href := "index.html")("kyledavi.es")),
-              li(a(href := "blog.html")("Blog")),
-              li(a(href := "demos.html")("Demos")),
-              li(a(href := "about_me.html")("About Me"))
+              li(a(href := "/index.html")("kyledavi.es")),
+              li(a(href := "/blog.html")("Blog")),
+              li(a(href := "/demos.html")("Demos")),
+              li(a(href := "/about-me.html")("About Me"))
             )
           )
         ),
@@ -41,6 +41,6 @@ trait Base extends gelatinous.Template {
   }
 
   override def pageScripts(): Frag = {
-    script(src := urlFor("js", "scripts.js"))
+    script(src := urlFor("/js", "scripts.js"))
   }
 }

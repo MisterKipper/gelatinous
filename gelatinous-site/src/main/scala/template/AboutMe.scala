@@ -2,7 +2,7 @@ package gelatinous.site.template
 
 import scalatags.Text
 
-class AboutMe extends Base {
+object AboutMe extends Base {
   import Text.all._
   val pageTitle = "About Me"
   val route = "about-me.html"
@@ -16,5 +16,3 @@ class AboutMe extends Base {
     )
   }
 }
-
-object AboutMe extends AboutMe {}

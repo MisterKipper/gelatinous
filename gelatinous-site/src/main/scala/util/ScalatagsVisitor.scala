@@ -5,8 +5,8 @@ import scalatags.Text
 
 object ScalatagsVisitor {
   import Text.all._
-  var nNodes = 0
-  def walkTree(node: Node, length: Option[Int] = None): Frag = {
+  // var nNodes = 0
+  def walkTree(node: Node): Frag = {  //, length: Option[Int] = None): Frag = {
     node match {
       case null => frag()
       case node: Text => node.getLiteral()
@@ -15,7 +15,7 @@ object ScalatagsVisitor {
         val f = node match {
           case _: Document => Text.tags2.article
           case node: Heading => {
-            nNodes += 1
+            // nNodes += 1
             node.getLevel() match {
               case 1 => h1
               case 2 => h2
@@ -26,7 +26,7 @@ object ScalatagsVisitor {
             }
           }
           case _: Paragraph => {
-            nNodes += 1
+            // nNodes += 1
             p
           }
           case _: BulletList => ul
@@ -45,15 +45,16 @@ object ScalatagsVisitor {
             tag("unknowntag")
           }
         }
-        length match {
-          case Some(length) =>
-            if (nNodes >= length) {
-              frag()
-            } else {
-              f(getChildren(node).get.map(walkTree(_, Some(length))).fold(frag())(frag(_, _)))
-            }
-          case None => f(getChildren(node).get.map(walkTree(_, None)).fold(frag())(frag(_, _)))
-        }
+        f(getChildren(node).get.map(walkTree).fold(frag())(frag(_, _)))
+        // length match {
+        //   case Some(length) =>
+        //     if (nNodes >= length) {
+        //       frag()
+        //     } else {
+        //       f(getChildren(node).get.map(walkTree(_, Some(length))).fold(frag())(frag(_, _)))
+        //     }
+        //   case None => f(getChildren(node).get.map(walkTree(_, None)).fold(frag())(frag(_, _)))
+        // }
       }
     }
   }

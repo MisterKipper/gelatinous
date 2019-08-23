@@ -10,7 +10,7 @@ import gelatinous.site.Manifest
 import gelatinous.site.util.ScalatagsVisitor
 import org.commonmark.ext.front.matter.YamlFrontMatterVisitor
 
-class Post(data: List[String]) extends Article(data) with PrettyText {
+class Post(data: List[String]) extends Article(data) with Base with PrettyText {
   val parser = Parser
     .builder()
     .extensions(List(YamlFrontMatterExtension.create()).asJava)
@@ -25,13 +25,13 @@ class Post(data: List[String]) extends Article(data) with PrettyText {
   }
   val (metadata, postHtml) = processInput
   val digest = {
-    ScalatagsVisitor.walkTree(mdParsed, Some(3))
+    ScalatagsVisitor.walkTree(mdParsed) // Some(3))
   }
   println(digest.render)
   val pageTitle = metadata("title")
+  def pageContent = postHtml
   val slug = pageTitle.toLowerCase.replace(' ', '-')
   val route = PostCollection.baseRoute + slug + ".html"
-  def render = postHtml.pretty
 }
 
 object PostCollection extends ArticleCollection {
