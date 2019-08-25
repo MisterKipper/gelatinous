@@ -35,8 +35,8 @@ trait Base extends gelatinous.Template {
 
   override def pageStyles(): Frag = {
     frag(
-      link(rel := "stylesheet", href := urlFor("css", "styles.css")),
-      link(rel := "stylesheet", href := urlFor("css", "fonts.css"))
+      link(rel := "stylesheet", href := urlFor("/css", "styles.css")),
+      link(rel := "stylesheet", href := urlFor("/css", "fonts.css"))
     )
   }
 

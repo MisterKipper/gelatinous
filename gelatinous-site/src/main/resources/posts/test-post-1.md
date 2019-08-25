@@ -8,4 +8,4 @@ title: My first test post
 - How it will
 - Turn out
 
-*test* ![Yeah](img/stars-thumbnail.png "Title")
+*test* ![Yeah](/img/stars-thumbnail.png "Title")
