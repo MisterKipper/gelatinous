@@ -19,7 +19,7 @@ trait Base extends gelatinous.Template {
         header(
           Text.tags2.nav(
             ul(
-              li(a(href := "/index.html")("kyledavi.es")),
+              li(a(href := "/")("kyledavi.es")),
               li(a(href := "/blog.html")("Blog")),
               li(a(href := "/demos.html")("Demos")),
               li(a(href := "/about-me.html")("About Me"))
