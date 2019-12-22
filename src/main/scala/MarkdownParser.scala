@@ -72,15 +72,6 @@ object ScalatagsVisitor {
           }
         }
         f(getChildren(node).get.map(walkTree).fold(frag())(frag(_, _)))
-        // length match {
-        //   case Some(length) =>
-        //     if (nNodes >= length) {
-        //       frag()
-        //     } else {
-        //       f(getChildren(node).get.map(walkTree(_, Some(length))).fold(frag())(frag(_, _)))
-        //     }
-        //   case None => f(getChildren(node).get.map(walkTree(_, None)).fold(frag())(frag(_, _)))
-        // }
       }
     }
   }

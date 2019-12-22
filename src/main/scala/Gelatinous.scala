@@ -7,14 +7,14 @@ import java.nio.file.attribute.BasicFileAttributes
 class Gelatinous(manifest: Manifest) {
   val sourcePath = Paths.get(manifest.sourceDir)
   val targetPath = Paths.get(manifest.targetDir)
+  val assetSourcePath = Paths.get(manifest.assetDir)
 
   def build() = {
     cleanDirectory(targetPath)
 
-    val assetSource = manifest.assetPath
-    val assetRoute = targetPath.resolve(assetSource.resolve("..")) // HACK
-    Files.createDirectories(assetRoute)
-    Files.walkFileTree(sourcePath.resolve(assetSource), new AssetCopier(assetRoute))
+    val assetTargetPath = targetPath.resolve(assetSourcePath.resolve("..")) // HACK
+    Files.createDirectories(assetTargetPath)
+    Files.walkFileTree(sourcePath.resolve(assetSourcePath), new AssetCopier(assetTargetPath))
 
     manifest.standalonePages.foreach(
       page => {
@@ -26,7 +26,7 @@ class Gelatinous(manifest: Manifest) {
     manifest.collections.foreach(collection => {
       val html = collection.indexPage.render
       writeFile(html, collection.indexPage.route)
-      collection.getArticles.foreach(article => {
+      collection.articles.foreach(article => {
         val html = article.render
         writeFile(html, article.route)
       })

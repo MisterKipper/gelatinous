@@ -4,7 +4,7 @@ package gelatinous
 import scalatags.Text.all.Frag
 
 trait Template extends PrettyText {
-  val myHtml: Frag  // TypedTag[String]
+  val myHtml: scalatags.Text.all.doctype  // Frag
   val route: String
   def pageStyles(): Frag
   def pageContent(): Frag
@@ -12,5 +12,5 @@ trait Template extends PrettyText {
   def urlFor(folder: String, filename: String): String = {
     s"$folder/$filename"
   }
-  def render = "<!DOCTYPE html>\n" + myHtml.pretty
+  def render = myHtml.pretty
 }
