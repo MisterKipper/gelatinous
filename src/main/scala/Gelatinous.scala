@@ -12,9 +12,8 @@ class Gelatinous(manifest: Manifest) {
   def build() = {
     cleanDirectory(targetPath)
 
-    val assetTargetPath = targetPath.resolve(assetSourcePath.resolve("..")) // HACK
-    Files.createDirectories(assetTargetPath)
-    Files.walkFileTree(sourcePath.resolve(assetSourcePath), new AssetCopier(assetTargetPath))
+    Files.createDirectories(targetPath)
+    Files.walkFileTree(sourcePath.resolve(assetSourcePath), new AssetCopier(targetPath))
 
     manifest.standalonePages.foreach(
       page => {

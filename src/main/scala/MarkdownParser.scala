@@ -25,7 +25,7 @@ class MarkdownParser extends AbstractParser {
 
 object ScalatagsVisitor {
   import Text.all._
-  var metadata: MutableMap[String, String] = MutableMap()
+  val metadata: MutableMap[String, String] = MutableMap()
   // var nNodes = 0
   def walkTree(node: Node): Frag = {  //, length: Option[Int] = None): Frag = {
     node match {
