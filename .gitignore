@@ -2,5 +2,6 @@
 .metals/
 .sbt-hydra-history
 project/.bloop/
+project/metals.sbt
 # */src/main/resources/
 target/

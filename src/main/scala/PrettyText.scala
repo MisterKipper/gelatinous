@@ -27,6 +27,7 @@ trait PrettyText {
         var i = 0
         while (i < builder.childIndex) {
           builder.children(i) match {
+            case t: scalatags.Text.all.StringFrag if t.v.isEmpty() => ()
             case t: TypedTag[String] =>
               strb += '\n'
               t.prettyWriteTo(strb, depth + 1)
