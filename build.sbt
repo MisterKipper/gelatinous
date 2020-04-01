@@ -9,7 +9,7 @@ lazy val commonSettings = Seq(
     // "-language:existentials",
     "-language:experimental.macros",
     "-language:higherKinds",
-    "-language:implicitConversions",
+    // "-language:implicitConversions",
     "-unchecked",
     "-Xcheckinit",
     "-Xfatal-warnings",
