@@ -14,28 +14,31 @@ class MarkdownParser extends AbstractParser {
     .builder()
     .extensions(List(YamlFrontMatterExtension.create()).asJava)
     .build()
-  def parse(markdown: String, nNodes: Int = 3) = {
+  def parse(markdown: String) = {
     val mdParsed = parser.parse(markdown)
     val postHtml = MarkdownParser.walkTree(mdParsed)
     val metadata = MarkdownParser.metadata.toMap
     MarkdownParser.nNodes = 0
-    val digest = MarkdownParser.walkTree(mdParsed, nNodes)
+    val digest = MarkdownParser.walkTree(mdParsed, true)
     (metadata, postHtml, digest)
   }
 }
 
 object MarkdownParser {
   import scalatags.Text.all._
+  private val maxNodes = 3
   private var nNodes = 0
   val metadata: MutableMap[String, String] = MutableMap()
-  def walkTree(n: node.Node, maxNodes: Int = -1): Frag = {
-    if (maxNodes - nNodes == 0) {
+  def walkTree(n: node.Node, isDigest: Boolean = false): Frag = {
+    if (isDigest && maxNodes - nNodes == 0) {
       ""
     } else {
       n match {
         case null => UnitFrag(())
         case n: node.Text => {
-          nNodes += 1
+          if (isDigest) {
+            nNodes += 1
+          }
           n.getLiteral()
         }
         case _: node.SoftLineBreak => " "
@@ -45,39 +48,54 @@ object MarkdownParser {
           UnitFrag(())
         }
         case n: YamlFrontMatterBlock => {
-          getChildren(n).get.map(walkTree(_, maxNodes))
+          getChildren(n).get.map(walkTree(_, isDigest))
         }
         case n: Any => {
           val f = n match {
-            case _: node.Document => scalatags.Text.tags2.article
+            case _: node.Document => scalatags.Text.tags2.article(_)
             case n: node.Heading => {
-              val i = if (maxNodes > 0) 1 else 0
-              n.getLevel() + i match {
-                case 1 => h1
-                case 2 => h2
-                case 3 => h3
-                case 4 => h4
-                case 5 => h5
-                case 6 => h6
+              if (isDigest) {
+                val x = n.getLevel() match {
+                  case 1 => (x: Seq[scalatags.Text.Modifier]) => h2(a(href := s"""/blog/${this.metadata("title").toLowerCase.replace(' ', '-')}.html""")(x))
+                  case 2 => h3(_)
+                  case 3 => h4(_)
+                  case 4 => h5(_)
+                  case 5 => h6(_)
+                  case 6 => h6(_)
+                }
+                x
+              } else {
+                n.getLevel() match {
+                  case 1 => h1(_)
+                  case 2 => h2(_)
+                  case 3 => h3(_)
+                  case 4 => h4(_)
+                  case 5 => h5(_)
+                  case 6 => h6(_)
+                }
               }
             }
-            case _: node.Paragraph => p
-            case _: node.BulletList => ul
-            case _: node.ListItem => li
-            case _: node.Emphasis => em
-            case _: node.BlockQuote => blockquote
-            case _: node.Code => code
-            case _: node.HardLineBreak => br
-            case _: node.OrderedList => ol
-            case _: node.StrongEmphasis => b
-            case _: node.ThematicBreak => hr
-            case n: node.Link => a(href := n.getDestination(), title := n.getTitle())
+            case _: node.Paragraph => p(_)
+            case _: node.BulletList => ul(_)
+            case _: node.ListItem => li(_)
+            case _: node.Emphasis => em(_)
+            case _: node.BlockQuote => blockquote(_)
+            case _: node.Code => code(_)
+            case _: node.HardLineBreak => br(_)
+            case _: node.OrderedList => ol(_)
+            case _: node.StrongEmphasis => b(_)
+            case _: node.ThematicBreak => hr(_)
+            case n: node.Link => a(href := n.getDestination(), title := n.getTitle())(_)
             case n: Any => {
               println(s"Unknown commonmark node type: $n")
-              tag(s"${n.toString().dropRight(2)}")
+              tag(s"${n.toString().dropRight(2)}")(_)
             }
           }
-          f(getChildren(n).get.map(walkTree(_, maxNodes)).fold(frag())(frag(_, _)))
+          val x = getChildren(n).get.map(walkTree(_, isDigest)).fold(frag())(frag(_, _))
+          def g(xs: Modifier*): scalatags.Text.TypedTag[String] = {
+            f.apply(xs)
+          }
+          g(x)
         }
       }
     }
@@ -94,4 +112,5 @@ object MarkdownParser {
     case null => result.reverse
     case n => getSiblings(n.getNext(), n :: result)
   }
+
 }
