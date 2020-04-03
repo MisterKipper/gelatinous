@@ -129,7 +129,7 @@ input[type="submit"] {
 input[type="submit"]:focus, input[type="submit"]:hover {
     background-color: #F9F9F9
 }
-ul.demos, ul.blog-posts, ul.comments, ul.pagination, ul.messages {
+ul.demos, ul.digests, ul.comments, ul.pagination, ul.messages {
     list-style: none;
     padding-inline-start: 0;
 }
