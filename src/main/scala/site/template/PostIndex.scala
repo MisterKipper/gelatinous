@@ -6,6 +6,7 @@ object PostIndex extends Base with gelatinous.Index {
   val pageTitle = "Blog"
   def pageContent = {
     val digests = PostCollection.articles.sortBy(_.timestamp).map(_.digest)
-    ul(li(digests(0)), li(digests(1)))
+    val listItems = digests.map(li(cls := "post-digest")(_))
+    ul(cls := "digests")(listItems)
   }
 }
