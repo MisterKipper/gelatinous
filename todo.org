@@ -9,3 +9,12 @@
 ** TODO Starmap
 ** TODO Machine learning!
 
+<<<<<<< Updated upstream
+=======
+* Log
+** [2020-04-08]
+  :LOGBOOK:
+  CLOCK: [2020-04-08 Wed 13:00]
+  :END:
+* Notes
+** Architecture
