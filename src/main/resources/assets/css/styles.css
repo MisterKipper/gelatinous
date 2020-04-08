@@ -83,6 +83,11 @@ ul.demos, ul.digests, ul.pagination {
     list-style: none;
     padding-inline-start: 0;
 }
+ul.digests ul, ul.demos ul {
+    list-style: initial;
+    margin: initial;
+    padding: 0 0 0 40px;
+}
 img.demo-thumbnail {
     float: left;
     width: 4rem;
