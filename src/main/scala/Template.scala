@@ -12,5 +12,5 @@ trait Template extends PrettyText {
   def urlFor(folder: String, filename: String): String = {
     s"$folder/$filename"
   }
-  def render = myHtml.pretty
+  def render: String = myHtml.pretty
 }

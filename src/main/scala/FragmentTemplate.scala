@@ -4,5 +4,5 @@ import scalatags.Text.all.Frag
 
 trait FragmentTemplate extends PrettyText {
   val myHtml: Frag  // TypedTag[String]
-  def render = myHtml.pretty
+  def render: String = myHtml.pretty
 }

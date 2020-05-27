@@ -1,7 +1,7 @@
 package gelatinous
 
+import scalatags.Text.all.Frag
+
 abstract class AbstractParser {
-  def parse(
-      data: String,
-  ): (Map[String, String], scalatags.Text.all.Frag, scalatags.Text.all.Frag)
+  def parse(data: Seq[String]): (Map[String, String], Frag, Frag)
 }

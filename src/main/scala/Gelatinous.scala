@@ -9,7 +9,7 @@ class Gelatinous(manifest: Manifest) {
   val targetPath = Paths.get(manifest.targetDir)
   val assetSourcePath = Paths.get(manifest.assetDir)
 
-  def build() = {
+  def build(): Unit = {
     cleanDirectory(targetPath)
 
     Files.createDirectories(targetPath)

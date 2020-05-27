@@ -1,9 +1,11 @@
 package gelatinous
 
+import scalatags.Text.all.Frag
+
 case class Pagination(items: List[FragmentTemplate], baseUrl: String, itemsPerPage: Int = 10) {
   val pageCount = 1 + (items.size - 1) / itemsPerPage
 
-  def makePage(page: Int) = {
+  def makePage(page: Int): Frag = {
     import scalatags.Text.all._
     import scalatags.Text.tags2.nav
     import scalatags.Text.attrs.href

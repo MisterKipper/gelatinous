@@ -1,4 +1,4 @@
-package gelatinous.site.template
+package gelatinous.site
 
 import scalatags.Text
 
