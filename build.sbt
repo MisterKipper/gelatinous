@@ -31,6 +31,7 @@ lazy val commonSettings = Seq(
     // "-Ybackend-parallelism", "2",
     "-Ycache-plugin-class-loader:last-modified",
     "-Ycache-macro-class-loader:last-modified",
+    // "-Ypartial-unification",
     "-Ywarn-dead-code",
     "-Ywarn-extra-implicit",
     "-Ywarn-numeric-widen",
@@ -44,10 +45,10 @@ lazy val commonSettings = Seq(
   // (scalacOptions in (Test, run)) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"),
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "3.0.8" % Test,
-    "com.lihaoyi" %% "scalatags" % "0.7.0",
-    "com.davegurnell" % "spandoc_2.12" % "0.2.0",
-    "com.atlassian.commonmark" % "commonmark" % "0.13.1",
-    "com.atlassian.commonmark" % "commonmark-ext-yaml-front-matter" % "0.13.1",
+    "org.typelevel" %% "cats-core" % "2.0.0",
+    "com.lihaoyi" %% "scalatags" % "0.9.1",
+    "com.atlassian.commonmark" % "commonmark" % "0.15.0",
+    "com.atlassian.commonmark" % "commonmark-ext-yaml-front-matter" % "0.15.0",
     )
 )
 
