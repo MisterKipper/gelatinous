@@ -5,44 +5,44 @@ import scalatags.text.Builder
 
 trait PrettyText {
   implicit class PrettyTypedTag(tt: scalatags.Text.TypedTag[String]) {
-    def prettyWriteTo(strb: StringBuilder, depth: Int): StringBuilder = {
+    def prettyWriteTo(strb: java.io.Writer, depth: Int): java.io.Writer = {
       val builder = new Builder()
       tt.build(builder)
       val indent = "  " * depth
-      strb ++= indent += '<' ++= tt.tag
+      strb.append(indent).append('<').append(tt.tag)
 
       var i = 0
       while (i < builder.attrIndex) {
         val pair = builder.attrs(i)
-        strb += ' ' ++= pair._1 ++= "=\""
+        strb.append(' ').append(pair._1).append("=\"")
         builder.appendAttrStrings(pair._2, strb)
-        strb += '\"'
+        strb.append('\"')
         i += 1
       }
 
       if (builder.childIndex == 0 && tt.void) {
-        strb ++= " />"
+        strb.append(" />")
       } else {
-        strb ++= ">"
+        strb.append(">")
         var i = 0
         while (i < builder.childIndex) {
           builder.children(i) match {
             case t: scalatags.Text.all.StringFrag if t.v.matches("^\\s*$") => ()
             case t: TypedTag[String] =>
-              strb += '\n'
+              strb.append('\n')
               t.prettyWriteTo(strb, depth + 1)
             case any =>
-              strb += '\n' ++= "  " * (depth + 1)
+              strb.append('\n').append("  " * (depth + 1))
               any.writeTo(strb)
           }
           i += 1
         }
-        strb += '\n' ++= indent ++= "</" ++= tt.tag += '>'
+        strb.append('\n').append(indent).append("</").append(tt.tag).append('>')
       }
     }
 
     def pretty: String = {
-      val strb = new StringBuilder
+      val strb = new java.io.StringWriter
       prettyWriteTo(strb, 0)
       strb.toString()
     }
