@@ -46,10 +46,13 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "3.0.8" % Test,
     "org.typelevel" %% "cats-core" % "2.0.0",
+    "org.typelevel" %% "cats-effect" % "2.1.3" withSources() withJavadoc(),
     "com.lihaoyi" %% "scalatags" % "0.9.1",
     "com.atlassian.commonmark" % "commonmark" % "0.15.0",
     "com.atlassian.commonmark" % "commonmark-ext-yaml-front-matter" % "0.15.0",
-    )
+    ),
+    wartremoverErrors ++= Warts.all
+    // wartremoverWarnings ++= Warts.all
 )
 
 lazy val root = (project in file("."))
