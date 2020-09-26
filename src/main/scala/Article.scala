@@ -1,8 +1,10 @@
 package gelatinous
 
-abstract class Article(data: List[String], parser: AbstractParser = new RawParser) {
+import scalatags.Text.all.Frag
+
+abstract class Article(data: List[String], parser: AbstractParser) {
   type Metadata = Map[String, String]
-  val (metadata, postHtml, digest) = parser.parse(data)
+  val (metadata: Map[String, String], postHtml: Frag, digest: Frag) = parser.parse(data)
   val route: String
   def render: String
 }

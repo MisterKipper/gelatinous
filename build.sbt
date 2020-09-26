@@ -1,5 +1,5 @@
 lazy val commonSettings = Seq(
-  scalaVersion := "2.13.1",
+  scalaVersion := "2.13.2",
   organization := "es.kyledavi",
   scalacOptions ++= Seq(
     "-deprecation",
@@ -41,17 +41,25 @@ lazy val commonSettings = Seq(
     // "-Yno-imports"  // no automatic imports at all; all symbols must be imported explicitly
     // "-P:silencer:checkUnused",
     ),
-  (scalacOptions in (Compile, console)) --= Seq("-Ywarn-unused", "-Xfatal-warnings"),
   // (scalacOptions in (Test, run)) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"),
   libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "3.0.8" % Test,
-    "org.typelevel" %% "cats-core" % "2.0.0",
-    "org.typelevel" %% "cats-effect" % "2.1.3" withSources() withJavadoc(),
+    "org.scalatest" %% "scalatest" % "3.2.0" % "test",
+    "org.typelevel" %% "cats-core" % "2.2.0",
+    "org.typelevel" %% "cats-effect" % "2.2.0" withSources() withJavadoc(),
+    "co.fs2" %% "fs2-io" % "2.4.4",
     "com.lihaoyi" %% "scalatags" % "0.9.1",
-    "com.atlassian.commonmark" % "commonmark" % "0.15.0",
-    "com.atlassian.commonmark" % "commonmark-ext-yaml-front-matter" % "0.15.0",
+    // "com.lihaoyi" % "ammonite" % "2.1.4" % "test" cross CrossVersion.full,
+    "com.atlassian.commonmark" % "commonmark" % "0.15.2",
+    "com.atlassian.commonmark" % "commonmark-ext-yaml-front-matter" % "0.15.2",
     ),
-    wartremoverErrors ++= Warts.all
+  wartremoverErrors in (Compile, compile) ++= Warts.all,
+  (scalacOptions in (Compile, console)) --= Seq("-Ywarn-unused", "-Xfatal-warnings"),
+  (scalacOptions in (Test, console)) --= Seq("-Ywarn-unused", "-Xfatal-warnings"),
+  sourceGenerators in Test += Def.task {
+  val file = (sourceManaged in Test).value / "amm.scala"
+    IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
+    Seq(file)
+  }.taskValue
     // wartremoverWarnings ++= Warts.all
 )
 
@@ -62,3 +70,13 @@ lazy val root = (project in file("."))
     version := "0.1.0",
     mainClass in (Compile, run) := Some("gelatinous.site.Site")
   )
+
+(fullClasspath in Test) ++= {
+  (updateClassifiers in Test).value
+    .configurations
+    .find(_.configuration.name == Test.name)
+    .get
+    .modules
+    .flatMap(_.artifacts)
+    .collect{case (a, f) if a.classifier == Some("sources") => f}
+}

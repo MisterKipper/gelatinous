@@ -10,13 +10,16 @@ import org.commonmark.ext.front.matter.YamlFrontMatterNode
 import org.commonmark.ext.front.matter.YamlFrontMatterExtension
 import scalatags.Text.all.Frag
 
+import Util.discard
+import scala.annotation.tailrec
+
 class MarkdownParser extends AbstractParser {
-  val parser = Parser
+  val parser: Parser = Parser
     .builder()
     .extensions(List(YamlFrontMatterExtension.create()).asJava)
     .build()
   def parse(markdown: Seq[String]): (Map[String, String], Frag, Frag) = {
-    val s = markdown.reduce((result, line) => result + '\n' ++ line)
+    val s = markdown.fold("")((acc, line) => acc ++ "\n" ++ line)
     val mdParsed = parser.parse(s)
     val postHtml = MarkdownParser.walkTree(mdParsed)
     val metadata = MarkdownParser.metadata.toMap
@@ -26,19 +29,22 @@ class MarkdownParser extends AbstractParser {
   }
 }
 
+// TODO: Rewrite to be properly functional and not have to ignore all these warts.
+@SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.MutableDataStructures", "org.wartremover.warts.DefaultArguments"))
 object MarkdownParser {
   import scalatags.Text.all._
   private val maxNodes = 3
   private var nNodes = 0
   val metadata: MutableMap[String, String] = MutableMap()
   def walkTree(n: node.Node, isDigest: Boolean = false): Frag = {
-    if (isDigest && maxNodes - nNodes == 0) {
+    if (isDigest && maxNodes - nNodes === 0) {
       ""
     } else {
       convertNode(n, isDigest)
     }
   }
 
+  @SuppressWarnings(Array("org.wartremover.warts.Null"))
   def convertNode(n: node.Node, isDigest: Boolean): Frag = {
     n match {
       case null => UnitFrag(())
@@ -51,11 +57,14 @@ object MarkdownParser {
       case _: node.SoftLineBreak => " "
       case n: node.Image => img(src := n.getDestination, title := n.getTitle)
       case n: YamlFrontMatterNode => {
-        metadata += (n.getKey() -> n.getValues().get(0))
-        UnitFrag(())
+        discard(metadata += (n.getKey() -> n.getValues().get(0)))
+        // UnitFrag(())
       }
       case n: YamlFrontMatterBlock => {
-        getChildren(n).get.map(walkTree(_, isDigest))
+        getChildren(n) match {
+          case Some(c) => c.map(walkTree(_, isDigest))
+          case None => UnitFrag(())
+        }
       }
       case n: Any => convertBranchNode(n, isDigest)
     }
@@ -77,11 +86,16 @@ object MarkdownParser {
       case _: node.ThematicBreak => hr(_)
       case n: node.Link => a(href := n.getDestination(), title := n.getTitle())(_)
       case n: Any => {
-        println(s"Unknown commonmark node type: $n")
+        println(s"Unknown commonmark node type: ${n.toString()}")
         tag(s"${n.toString().dropRight(2)}")(_)
       }
     }
-    val x = getChildren(n).get.map(walkTree(_, isDigest)).fold(frag())(frag(_, _))
+
+    val x = getChildren(n) match {
+      case Some(c) => c.map(walkTree(_, isDigest)).fold(frag())(frag(_, _))
+      case None => UnitFrag(())
+    }
+
     def g(xs: Modifier*): Frag = {
       f.apply(xs)
     }
@@ -116,6 +130,7 @@ object MarkdownParser {
       }
   }
 
+  @SuppressWarnings(Array("org.wartremover.warts.Null"))
   def getChildren(n: node.Node): Option[List[node.Node]] = n match {
     case null => None
     case n => {
@@ -123,9 +138,15 @@ object MarkdownParser {
     }
   }
 
+  @SuppressWarnings(Array("org.wartremover.warts.Null"))
+  @tailrec
   def getSiblings(n: node.Node, result: List[node.Node]): List[node.Node] = n match {
     case null => result.reverse
     case n => getSiblings(n.getNext(), n :: result)
   }
 
+  @SuppressWarnings(Array("org.wartremover.warts.Equals"))
+  implicit final class AnyOps[A](self: A) {
+    def ===(other: A): Boolean = self == other
+  }
 }

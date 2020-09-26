@@ -2,8 +2,8 @@ package gelatinous
 
 import scalatags.Text.all.Frag
 
-case class Pagination(items: List[FragmentTemplate], baseUrl: String, itemsPerPage: Int = 10) {
-  val pageCount = 1 + (items.size - 1) / itemsPerPage
+final case class Pagination(items: List[FragmentTemplate], baseUrl: String, itemsPerPage: Int) {
+  val pageCount: Int = 1 + (items.size - 1) / itemsPerPage
 
   def makePage(page: Int): Frag = {
     import scalatags.Text.all._
@@ -13,7 +13,7 @@ case class Pagination(items: List[FragmentTemplate], baseUrl: String, itemsPerPa
       ul(items.slice((page - 1) * itemsPerPage, page * itemsPerPage).map(_.myHtml)),
       nav(
         ul(
-          (1 to pageCount).map(i => li(a(href := s"$baseUrl/$i.html")(i.toString)))
+          (1 to pageCount).map(i => li(a(href := s"$baseUrl/${i.toString()}.html")(i.toString)))
         )
       )
     )

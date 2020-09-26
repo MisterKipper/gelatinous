@@ -1,10 +1,11 @@
 package gelatinous.site
 
-import gelatinous.Gelatinous
+import gelatinous.GelatinousApp
 
-object Site {
-  def main(args: Array[String]): Unit = {
-    val gelatinous = new Gelatinous(Manifest)
-    gelatinous.build()
-  }
+object Site extends GelatinousApp {
+  val assetDir = "assets"
+  val sourceDir = "src/main/resources/"
+  val targetDir = "target/site/"
+  val standalonePages = List(Index, AboutMe)
+  val collections = List(PostCollection)
 }

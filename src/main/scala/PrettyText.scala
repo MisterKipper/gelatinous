@@ -3,6 +3,14 @@ package gelatinous
 import scalatags.Text.TypedTag
 import scalatags.text.Builder
 
+@SuppressWarnings(
+  Array(
+    "org.wartremover.warts.Var",
+    "org.wartremover.warts.NonUnitStatements",
+    "org.wartremover.warts.While",
+    "org.wartremover.warts.Recursion"
+  )
+)
 trait PrettyText {
   implicit class PrettyTypedTag(tt: scalatags.Text.TypedTag[String]) {
     def prettyWriteTo(strb: java.io.Writer, depth: Int): java.io.Writer = {
@@ -20,7 +28,7 @@ trait PrettyText {
         i += 1
       }
 
-      if (builder.childIndex == 0 && tt.void) {
+      if (builder.childIndex === 0 && tt.void) {
         strb.append(" />")
       } else {
         strb.append(">")
@@ -53,5 +61,10 @@ trait PrettyText {
       case f: TypedTag[String] => f.pretty
       case f: Any => f.render
     }
+  }
+
+  @SuppressWarnings(Array("org.wartremover.warts.Equals"))
+  implicit final class AnyOps[A](self: A) {
+    def ===(other: A): Boolean = self == other
   }
 }
