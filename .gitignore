@@ -1,5 +1,6 @@
 .bloop/
 .metals/
+.netlify/
 .sbt-hydra-history
 project/.bloop/
 project/metals.sbt
