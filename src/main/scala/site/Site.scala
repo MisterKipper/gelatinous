@@ -1,8 +1,7 @@
-package gelatinous.site
+package gelatinous
+package site
 
-import gelatinous.GelatinousApp
-
-object Site extends GelatinousApp {
+object Site extends Gelatinous {
   val assetDir = "assets"
   val sourceDir = "src/main/resources/"
   val targetDir = "target/site/"

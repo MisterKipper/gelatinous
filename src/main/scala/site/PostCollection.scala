@@ -1,6 +1,5 @@
-package gelatinous.site
-
-import gelatinous.ArticleCollection
+package gelatinous
+package site
 
 object PostCollection extends ArticleCollection[Post] {
   lazy val sourceDir = s"${Site.manifest.sourceDir}posts"

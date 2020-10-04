@@ -1,8 +1,8 @@
-package gelatinous.site
+package gelatinous
+package site
 
 import java.nio.file.Files
 import scala.jdk.CollectionConverters._
-import gelatinous.{ArticleCollection, Index, MarkdownParser}
 
 object DemoCollection extends ArticleCollection[Demo] {
   val sourceDir: String = Site.manifest.sourceDir ++ "demos/"

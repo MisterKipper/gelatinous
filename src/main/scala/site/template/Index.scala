@@ -1,6 +1,5 @@
-package gelatinous.site
-
-import gelatinous.site.PostCollection
+package gelatinous
+package site
 
 object Index extends Base {
   import scalatags.Text.all._

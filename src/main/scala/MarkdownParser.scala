@@ -13,7 +13,7 @@ import scalatags.Text.all.Frag
 import Util.discard
 import scala.annotation.tailrec
 
-class MarkdownParser extends AbstractParser {
+class MarkdownParser {
   val parser: Parser = Parser
     .builder()
     .extensions(List(YamlFrontMatterExtension.create()).asJava)

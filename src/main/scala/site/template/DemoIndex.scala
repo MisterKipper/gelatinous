@@ -1,15 +1,13 @@
-package gelatinous.site
+package gelatinous
+package site
 
 import scalatags.Text.all.Frag
 
-import gelatinous.Util.Descending
-import gelatinous.site.DemoCollection
-
-object DemoIndex extends Base with gelatinous.Index {
+object DemoIndex extends Base with Index {
   val route = "demos.html"
   val pageTitle = "Demos"
   def pageContent(): Frag =
     scalatags.Text.all.SeqFrag(
-      DemoCollection.demos.toList.sortBy(_.metadata("timestamp"))(Descending).map(_.summary)
+      DemoCollection.demos.toList.sortBy(_.metadata("timestamp"))(Util.Descending).map(_.summary)
     )
 }

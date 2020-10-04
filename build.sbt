@@ -12,7 +12,7 @@ lazy val commonSettings = Seq(
     // "-language:implicitConversions",
     "-unchecked",
     "-Xcheckinit",
-    "-Xfatal-warnings",
+    // "-Xfatal-warnings",
     "-Xlint:adapted-args",
     "-Xlint:constant",
     "-Xlint:delayedinit-select",
@@ -35,12 +35,13 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-extra-implicit",
     "-Ywarn-numeric-widen",
-    "-Ywarn-unused",
+    // "-Ywarn-unused",
     "-Ywarn-value-discard",
     // "-Yno-predef",  // no automatic import of Predef (removes irritating implicits)
     // "-Yno-imports"  // no automatic imports at all; all symbols must be imported explicitly
     // "-P:silencer:checkUnused",
     ),
+  (scalacOptions in (Compile, compile)) ++= Seq("-Ywarn-unused", "-Xfatal-warnings"),
   // (scalacOptions in (Test, run)) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"),
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "3.2.0" % "test",
@@ -53,8 +54,6 @@ lazy val commonSettings = Seq(
     "com.atlassian.commonmark" % "commonmark-ext-yaml-front-matter" % "0.15.2",
     ),
   wartremoverErrors in (Compile, compile) ++= Warts.all,
-  (scalacOptions in (Compile, console)) --= Seq("-Ywarn-unused", "-Xfatal-warnings"),
-  (scalacOptions in (Test, console)) --= Seq("-Ywarn-unused", "-Xfatal-warnings"),
   sourceGenerators in Test += Def.task {
   val file = (sourceManaged in Test).value / "amm.scala"
     IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
