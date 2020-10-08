@@ -22,7 +22,7 @@ class GelatinousSuite extends AnyFlatSpec {
     assert {
       (for {
         blocker <- fs2.Stream.resource(Blocker[IO])
-        foo <- fs2.Stream.eval(copyDirectoryRecursively[IO](blocker, source, target))
+        foo <- fs2.Stream.eval(Util.copyDirectoryRecursively[IO](blocker, source, target))
       } yield foo).compile.lastOrError.unsafeRunSync()
       true
     }
