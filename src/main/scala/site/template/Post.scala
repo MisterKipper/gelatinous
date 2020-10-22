@@ -3,8 +3,9 @@ package site
 
 import scalatags.Text.all.Frag
 
-class Post(data: List[String]) extends Article(data) with Base {
+class Post(dataIn: List[String]) extends Article with Base {
   // val (metadata, postHtml, digest) = parse(data.reduce((result, line) => result + '\n' ++ line))
+  val data: List[String] = dataIn
   val pageTitle: String = metadata("title")
   val timestamp: String = metadata("date")
   def pageContent(): Frag = postHtml

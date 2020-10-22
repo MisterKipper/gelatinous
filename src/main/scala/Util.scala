@@ -53,15 +53,6 @@ object Util {
       }
     )
 
-  // def writeFile(targetPath: Path, data: String, route: String): IO[Unit] = {
-  //   for {
-  //     filePath <- IO(targetPath.resolve(Paths.get(route)))
-  //     _ <- IO(Files.createDirectories(filePath.getParent))
-  //     _ <- IO(Files.createFile(filePath))
-  //     _ <- IO(Files.write(filePath, data.getBytes))
-  //   } yield ()
-  // }
-
   @specialized
   def discard[A](evaluateForSideEffectOnly: A): Unit = {
     val _ = evaluateForSideEffectOnly

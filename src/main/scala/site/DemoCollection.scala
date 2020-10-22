@@ -5,7 +5,7 @@ import java.nio.file.Files
 import scala.jdk.CollectionConverters._
 
 object DemoCollection extends ArticleCollection[Demo] {
-  val sourceDir: String = Site.manifest.sourceDir ++ "demos/"
+  val sourceDir: String = Site.sourceDir ++ "demos/"
   val baseRoute: String = "demos/"
   val indexPage: Index = DemoIndex
   val demos: Iterator[Demo] = Files
