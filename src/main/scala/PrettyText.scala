@@ -12,7 +12,7 @@ import scalatags.text.Builder
   )
 )
 trait PrettyText {
-  implicit class PrettyTypedTag(tt: scalatags.Text.TypedTag[String]) {
+  implicit class PrettyTypedTag(tt: TypedTag[String]) {
     def prettyWriteTo(strb: java.io.Writer, depth: Int): java.io.Writer = {
       val builder = new Builder()
       tt.build(builder)

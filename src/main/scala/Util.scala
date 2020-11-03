@@ -28,9 +28,9 @@ object Util {
     blocker.delay(discard(Files.walkFileTree(path, Set.empty.asJava, Int.MaxValue, fileVisitor)))
   }
 
-  def listDirectory(dir: Path): IO[List[Path]] = {
-    IO.delay(Files.list(dir).iterator().asScala.toList)
-  }
+  // def listDirectory[F[_]: Sync: ContextShift](blocker: Blocker, dir: Path): F[List[Path]] = {
+  //   blocker.delay(Files.list(dir).iterator().asScala.toList)
+  // }
 
   @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
   def copyDirectoryRecursively[F[_]: Sync: ContextShift](

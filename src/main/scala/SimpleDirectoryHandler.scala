@@ -3,8 +3,9 @@ package gelatinous
 import java.nio.file.Path
 import cats.effect._
 
+@SuppressWarnings(Array("org.wartremover.warts.ToString"))
 class SimpleDirectoryHandler extends Handler {
-  def run[F[_]: Sync: ContextShift](blocker: Blocker, source: Path, target: Path): F[Unit] = {
+  def apply[F[_]: Sync: ContextShift](blocker: Blocker, source: Path, target: Path): F[Unit] = {
     Util.copyDirectoryRecursively[F](blocker, source, target)
   }
 }

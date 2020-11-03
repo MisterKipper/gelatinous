@@ -10,9 +10,10 @@ import scala.concurrent.ExecutionContext
 import scala.jdk.CollectionConverters._
 import java.nio.file.attribute.BasicFileAttributes
 
+@SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
 class GelatinousSuite extends AnyFlatSpec {
-  val source = Paths.get("src/test/resources/test-dir/")
-  val target = Paths.get("target/test/test-dir/")
+  val source: Path = Paths.get("src/test/resources/test-dir/")
+  val target: Path = Paths.get("target/test/test-dir/")
   val executionContext: ExecutionContext = ExecutionContext.global
   implicit val contextShiftIO: ContextShift[IO] = IO.contextShift(executionContext)
 

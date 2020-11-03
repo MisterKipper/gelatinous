@@ -1,5 +1,6 @@
 package gelatinous
 
+import scala.annotation.tailrec
 import scala.collection.mutable.{Map => MutableMap}
 import scala.jdk.CollectionConverters._
 
@@ -8,16 +9,21 @@ import org.commonmark.parser.Parser
 import org.commonmark.ext.front.matter.YamlFrontMatterBlock
 import org.commonmark.ext.front.matter.YamlFrontMatterNode
 import org.commonmark.ext.front.matter.YamlFrontMatterExtension
-import scalatags.Text.all.Frag
 
 import Util.discard
-import scala.annotation.tailrec
 
-class MarkdownParser {
-  val parser: Parser = Parser
+// TODO: Rewrite to be properly functional and not have to ignore all these warts.
+@SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.MutableDataStructures", "org.wartremover.warts.DefaultArguments"))
+object MarkdownParser {
+  import scalatags.Text.all._
+  private val parser: Parser = Parser
     .builder()
     .extensions(List(YamlFrontMatterExtension.create()).asJava)
     .build()
+  private val maxNodes = 3
+  private var nNodes = 0
+  val metadata: MutableMap[String, String] = MutableMap()
+
   def parse(markdown: Seq[String]): (Map[String, String], Frag, Frag) = {
     val s = markdown.fold("")((acc, line) => acc ++ "\n" ++ line)
     val mdParsed = parser.parse(s)
@@ -27,15 +33,7 @@ class MarkdownParser {
     val digest = MarkdownParser.walkTree(mdParsed, true)
     (metadata, postHtml, digest)
   }
-}
 
-// TODO: Rewrite to be properly functional and not have to ignore all these warts.
-@SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.MutableDataStructures", "org.wartremover.warts.DefaultArguments"))
-object MarkdownParser {
-  import scalatags.Text.all._
-  private val maxNodes = 3
-  private var nNodes = 0
-  val metadata: MutableMap[String, String] = MutableMap()
   def walkTree(n: node.Node, isDigest: Boolean = false): Frag = {
     if (isDigest && maxNodes - nNodes === 0) {
       ""

@@ -4,5 +4,5 @@ package site
 object Site extends Gelatinous {
   val sourceDir = "src/main/resources/"
   val targetDir = "target/site/"
-  val directoryHandlers = Map("assets" -> SimpleDirectoryHandler, "posts" -> SimpleDirectoryHandler)
+  val directoryHandlers = Map("assets" -> SimpleDirectoryHandler, "posts" -> new MarkdownHandler(PostIndex, Post))
 }
