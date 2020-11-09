@@ -1,13 +1,12 @@
 package gelatinous
 
 import java.util.Date
-import java.text.SimpleDateFormat
+import java.nio.file.{Path, Paths}
 
-final case class ContentMetadata(date: Date, title: String) // TODO: escape title
+final case class ContentMetadata(date: Date, title: String, source: Path) // TODO: escape title
 
 object ContentMetadata {
-  def fromMap(map: Map[String, String]) = {
-    val format = new SimpleDateFormat("yyyy-MM-dd")
-    new ContentMetadata(format.parse(map("date")), map("title"))
+  def fromMap(map: Map[String, String]): ContentMetadata = {
+    new ContentMetadata(Util.convertStringToDate(map("date")), map("title"), Paths.get(map("source")))
   }
 }

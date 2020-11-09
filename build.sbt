@@ -46,9 +46,9 @@ lazy val commonSettings = Seq(
   // (scalacOptions in (Test, run)) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"),
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "3.2.0" % "test" withSources () withJavadoc (),
-    "org.typelevel" %% "cats-core" % "2.1.1" withSources () withJavadoc (),
-    "org.typelevel" %% "cats-effect" % "2.1.4" withSources () withJavadoc (),
-    "co.fs2" %% "fs2-io" % "2.4.4" withSources () withJavadoc (),
+    // "org.typelevel" %% "cats-core" % "2.1.1" withSources () withJavadoc (),
+    // "org.typelevel" %% "cats-effect" % "2.1.4" withSources () withJavadoc (),
+    // "co.fs2" %% "fs2-io" % "2.4.4" withSources () withJavadoc (),
     "com.lihaoyi" %% "scalatags" % "0.9.1" withSources () withJavadoc (),
     // "com.lihaoyi" % "ammonite" % "2.1.4" % "test" cross CrossVersion.full,
     "com.atlassian.commonmark" % "commonmark" % "0.15.2" withSources () withJavadoc (),

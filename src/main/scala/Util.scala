@@ -1,13 +1,9 @@
 package gelatinous
 
-// import java.io.IOException
 import java.nio.file._
-import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
-import scala.jdk.CollectionConverters._
-
-import cats.effect._
-// import fs2.io.file
+import java.nio.file.attribute.BasicFileAttributes
+import java.io.IOException
 
 object Util {
   val dateFormatString = "yyyy-MM-dd"
@@ -18,40 +14,23 @@ object Util {
 
   def Descending[T: Ordering]: scala.math.Ordering[T] = implicitly[Ordering[T]].reverse
 
-  @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
-  def operateOnDirectory[F[_]: Sync: ContextShift](
-      blocker: Blocker,
-      path: Path,
-      fileVisitor: FileVisitor[Path]
-      // options: Set[FileVisitOption] = Set.empty
-  ): F[Unit] = {
-    blocker.delay(discard(Files.walkFileTree(path, Set.empty.asJava, Int.MaxValue, fileVisitor)))
-  }
-
-  // def listDirectory[F[_]: Sync: ContextShift](blocker: Blocker, dir: Path): F[List[Path]] = {
-  //   blocker.delay(Files.list(dir).iterator().asScala.toList)
-  // }
-
-  @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
-  def copyDirectoryRecursively[F[_]: Sync: ContextShift](
-      blocker: Blocker,
-      source: Path,
-      target: Path
-  ): F[Unit] =
-    operateOnDirectory(
-      blocker,
-      source,
-      new SimpleFileVisitor[Path] {
-        override def preVisitDirectory(path: Path, attrs: BasicFileAttributes): FileVisitResult = {
-          discard(Files.createDirectory(target.resolve(source.relativize(path))))
-          FileVisitResult.CONTINUE
+  def deleteDirectoryRecursively(path: Path): Unit = {
+    discard(
+      Files.walkFileTree(
+        path,
+        new SimpleFileVisitor[Path] {
+          override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
+            Files.delete(file)
+            FileVisitResult.CONTINUE
+          }
+          override def postVisitDirectory(dir: Path, exc: IOException): FileVisitResult = {
+            Files.delete(dir)
+            FileVisitResult.CONTINUE
+          }
         }
-        override def visitFile(path: Path, attrs: BasicFileAttributes): FileVisitResult = {
-          discard(Files.copy(path, target.resolve(source.relativize(path))))
-          FileVisitResult.CONTINUE
-        }
-      }
+      )
     )
+  }
 
   @specialized
   def discard[A](evaluateForSideEffectOnly: A): Unit = {

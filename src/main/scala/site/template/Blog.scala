@@ -1,12 +1,12 @@
 package gelatinous
 package site
 
-object PostIndex extends Base with gelatinous.Index {
+object Blog extends Base with Index {
   import scalatags.Text.all._
-  val route = "blog.html"
+  val route = "/blog"
   val pageTitle = "Blog"
   def pageContent(): Frag = {
-    val digests = PostCollection.articles.sortBy(_.timestamp)(Util.Descending).map(_.digest)
+    val digests = List(frag(h1("One"), p("Yeah that's right")), frag(h1("Two"), p("Test test")))
     val listItems = digests.map(li(cls := "post-digest")(_))
     ul(cls := "digests")(listItems)
   }

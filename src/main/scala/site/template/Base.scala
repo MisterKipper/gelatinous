@@ -20,10 +20,10 @@ trait Base extends Template {
         header(
           tags2.nav(
             ul(
-              li(a(href := "/")("kyledavi.es")),
-              li(a(href := "/blog.html")("Blog")),
-              li(a(href := "/demos.html")("Demos")),
-              li(a(href := "/about-me.html")("About Me"))
+              li(a(href := "/")("www.kyle.earth")),
+              li(a(href := "/blog")("Blog")),
+              li(a(href := "/demo")("Demos")),
+              li(a(href := "/about-me")("About Me"))
             )
           )
         ),

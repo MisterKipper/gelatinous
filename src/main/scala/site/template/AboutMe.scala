@@ -4,7 +4,7 @@ import scalatags.Text.all._
 
 object AboutMe extends Base {
   val pageTitle = "About Me"
-  val route = "about-me.html"
+  val route = "about-me"
   override def pageContent(): Frag = {
     frag(
       h1("About me"),

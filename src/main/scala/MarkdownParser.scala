@@ -24,14 +24,15 @@ object MarkdownParser {
   private var nNodes = 0
   val metadata: MutableMap[String, String] = MutableMap()
 
-  def parse(markdown: Seq[String]): (Map[String, String], Frag, Frag) = {
+  def parse(markdown: Seq[String]): (ContentMetadata, Frag, Frag) = {
     val s = markdown.fold("")((acc, line) => acc ++ "\n" ++ line)
     val mdParsed = parser.parse(s)
     val postHtml = MarkdownParser.walkTree(mdParsed)
     val metadata = MarkdownParser.metadata.toMap
     MarkdownParser.nNodes = 0
     val digest = MarkdownParser.walkTree(mdParsed, true)
-    (metadata, postHtml, digest)
+    val md = ContentMetadata.fromMap(metadata)
+    (md, postHtml, digest)
   }
 
   def walkTree(n: node.Node, isDigest: Boolean = false): Frag = {

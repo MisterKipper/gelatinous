@@ -1,8 +1,13 @@
 package gelatinous
 package site
 
-object Site extends Gelatinous {
+import java.nio.file.Paths
+
+object Site extends App {
   val sourceDir = "src/main/resources/"
   val targetDir = "target/site/"
-  val directoryHandlers = Map("assets" -> SimpleDirectoryHandler, "posts" -> new MarkdownHandler(PostIndex, Post))
+  val pages = List(Home, AboutMe)
+  val directoryHandlers: Map[String, Handler] = Map("assets" -> new StaticHandler(Paths.get(sourceDir + "assets"))) //, "posts" -> new MarkdownHandler(Blog))
+  val manifest: Manifest = Manifest(sourceDir, targetDir, directoryHandlers)
+  (new Gelatinous).build(manifest)
 }
