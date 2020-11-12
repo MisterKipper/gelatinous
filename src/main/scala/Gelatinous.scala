@@ -6,7 +6,7 @@ import scala.jdk.CollectionConverters._
 
 // import Util.discard
 
-class Gelatinous {
+object Gelatinous {
   @SuppressWarnings(Array("org.wartremover.warts.ToString"))
   def build(manifest: Manifest): Unit = {
     val source = Paths.get(manifest.sourceDir)
@@ -14,6 +14,9 @@ class Gelatinous {
 
     Util.deleteDirectoryRecursively(target)
     Util.discard(Files.createDirectory(target))
+    for (page <- manifest.pages) {
+      Files.writeString(Paths.get(page.route), page.render())
+    }
     for (file <- Files.list(source).iterator().asScala) {
       val name = file.getParent().relativize(file).toString
       val handler = manifest.directoryHandlers.get(name)

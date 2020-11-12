@@ -54,7 +54,7 @@ lazy val commonSettings = Seq(
     "com.atlassian.commonmark" % "commonmark" % "0.15.2" withSources () withJavadoc (),
     "com.atlassian.commonmark" % "commonmark-ext-yaml-front-matter" % "0.15.2" withSources () withJavadoc ()
   ),
-  wartremoverErrors ++= Warts.all
+  wartremoverErrors in (Compile, compile) ++= Warts.all
 
   // sourceGenerators in Test += Def.task {
   //   val file = (sourceManaged in Test).value / "amm.scala"

@@ -1,8 +1,9 @@
-package gelatinous.site
+package gelatinous
+package site
 
 import scalatags.Text.all._
 
-object AboutMe extends Base {
+object AboutMe extends Base with Renderable {
   val pageTitle = "About Me"
   val route = "about-me"
   override def pageContent(): Frag = {

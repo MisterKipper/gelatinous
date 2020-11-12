@@ -6,9 +6,8 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.io.IOException
 
 object Util {
-  val dateFormatString = "yyyy-MM-dd"
   def convertStringToDate(s: String): java.util.Date = {
-    val dateFormat = new SimpleDateFormat(dateFormatString)
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
     dateFormat.parse(s)
   }
 

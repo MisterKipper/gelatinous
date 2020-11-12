@@ -4,7 +4,7 @@ package site
 import scalatags.Text.all._
 import scalatags.Text.tags2
 
-trait Base extends Template {
+trait Base extends Template with Renderable {
   val pageTitle: String
   lazy val myHtml = {
     html(lang := "en")(
@@ -44,5 +44,10 @@ trait Base extends Template {
 
   override def pageScripts(): Frag = {
     script(src := urlFor("/js", "scripts.js"))
+  }
+
+  // def build(content: Frag)
+  def render() = {
+    pageContent().pretty
   }
 }

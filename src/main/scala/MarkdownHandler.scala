@@ -6,7 +6,7 @@ import scala.jdk.CollectionConverters._
 
 @SuppressWarnings(Array("org.wartremover.warts.All"))
 class MarkdownHandler[A <: Index, B <: Template](source: Path, index: A, template: B) extends Handler {
-  def buildContents(): (Index, List[ContentItem]) = {
+  def buildContents(): (Renderable, List[ContentItem]) = {
     val items = scala.collection.mutable.ListBuffer.empty[ContentItem]
     Files.walkFileTree(
       source,
@@ -15,7 +15,8 @@ class MarkdownHandler[A <: Index, B <: Template](source: Path, index: A, templat
         override def visitFile(path: Path, attrs: BasicFileAttributes): FileVisitResult = {
           val lines = Files.readAllLines(path).asScala.toList
           val (metadata, content, _) = MarkdownParser.parse(lines)
-          items.append(PostItem(metadata, template.build(content).render))
+          template.build(metadata, content)
+          items.append(PostItem(metadata, content.render))
           FileVisitResult.CONTINUE
         }
 

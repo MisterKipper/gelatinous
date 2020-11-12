@@ -1,78 +1,72 @@
 package gelatinous
 
 import scala.annotation.tailrec
-import scala.collection.mutable.{Map => MutableMap}
+// import scala.collection.mutable.{Map => MutableMap}
 import scala.jdk.CollectionConverters._
 
 import org.commonmark.node
 import org.commonmark.parser.Parser
 import org.commonmark.ext.front.matter.YamlFrontMatterBlock
-import org.commonmark.ext.front.matter.YamlFrontMatterNode
 import org.commonmark.ext.front.matter.YamlFrontMatterExtension
-
-import Util.discard
+import org.commonmark.ext.front.matter.YamlFrontMatterVisitor
+// import Util.discard
 
 // TODO: Rewrite to be properly functional and not have to ignore all these warts.
-@SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.MutableDataStructures", "org.wartremover.warts.DefaultArguments"))
+// @SuppressWarnings(
+//   Array(
+//     "org.wartremover.warts.Var",
+//     "org.wartremover.warts.MutableDataStructures",
+//     "org.wartremover.warts.DefaultArguments"
+//   )
+// )
+@SuppressWarnings(Array("org.wartremover.warts.Null"))
 object MarkdownParser {
   import scalatags.Text.all._
   private val parser: Parser = Parser
     .builder()
     .extensions(List(YamlFrontMatterExtension.create()).asJava)
     .build()
-  private val maxNodes = 3
-  private var nNodes = 0
-  val metadata: MutableMap[String, String] = MutableMap()
 
   def parse(markdown: Seq[String]): (ContentMetadata, Frag, Frag) = {
     val s = markdown.fold("")((acc, line) => acc ++ "\n" ++ line)
     val mdParsed = parser.parse(s)
-    val postHtml = MarkdownParser.walkTree(mdParsed)
-    val metadata = MarkdownParser.metadata.toMap
-    MarkdownParser.nNodes = 0
-    val digest = MarkdownParser.walkTree(mdParsed, true)
-    val md = ContentMetadata.fromMap(metadata)
-    (md, postHtml, digest)
+    val postHtml = walkFullTree(mdParsed)
+    val metadata = getMetadata(mdParsed.getFirstChild())
+    val digest = walkTree(mdParsed, 3, 0)
+    (metadata, postHtml, digest)
   }
 
-  def walkTree(n: node.Node, isDigest: Boolean = false): Frag = {
-    if (isDigest && maxNodes - nNodes === 0) {
+  def getMetadata(n: node.Node): ContentMetadata = {
+    val yamlVisitor = new YamlFrontMatterVisitor
+    n.accept(yamlVisitor)
+    ContentMetadata.fromMap(yamlVisitor.getData().asScala.map { case (k, v) => (k, v.get(0)) })
+  }
+
+  def walkFullTree(n: node.Node): Frag = {
+    walkTree(n, Int.MaxValue, 0)
+  }
+
+  def walkTree(n: node.Node, maxDepth: Int, currentDepth: Int): Frag = {
+    if (maxDepth - currentDepth === 0) {
       ""
     } else {
-      convertNode(n, isDigest)
+      convertNode(n, maxDepth, currentDepth + 1)
     }
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.Null"))
-  def convertNode(n: node.Node, isDigest: Boolean): Frag = {
-    n match {
-      case null => UnitFrag(())
-      case n: node.Text => {
-        if (isDigest) {
-          nNodes += 1
-        }
-        n.getLiteral()
-      }
-      case _: node.SoftLineBreak => " "
-      case n: node.Image => img(src := n.getDestination, title := n.getTitle)
-      case n: YamlFrontMatterNode => {
-        discard(metadata += (n.getKey() -> n.getValues().get(0)))
-        // UnitFrag(())
-      }
-      case n: YamlFrontMatterBlock => {
-        getChildren(n) match {
-          case Some(c) => c.map(walkTree(_, isDigest))
-          case None => UnitFrag(())
-        }
-      }
-      case n: Any => convertBranchNode(n, isDigest)
-    }
+  def convertNode(n: node.Node, maxDepth: Integer, currentDepth: Integer): Frag = n match {
+    case null => UnitFrag(())
+    case _: YamlFrontMatterBlock => UnitFrag(())
+    case n: node.Text => n.getLiteral()
+    case _: node.SoftLineBreak => " "
+    case n: node.Image => img(src := n.getDestination, title := n.getTitle)
+    case n: Any => convertBranchNode(n, maxDepth, currentDepth)
   }
 
-  def convertBranchNode(n: node.Node, isDigest: Boolean): Frag = {
+  def convertBranchNode(n: node.Node, maxDepth: Int, currentDepth: Int): Frag = {
     val f = n match {
       case _: node.Document => scalatags.Text.tags2.article(_)
-      case n: node.Heading => convertHeading(n, isDigest)
+      case n: node.Heading => convertHeading(n)
       case _: node.Paragraph => p(_)
       case _: node.BulletList => ul(_)
       case _: node.ListItem => li(_)
@@ -91,7 +85,7 @@ object MarkdownParser {
     }
 
     val x = getChildren(n) match {
-      case Some(c) => c.map(walkTree(_, isDigest)).fold(frag())(frag(_, _))
+      case Some(c) => c.map(walkTree(_, maxDepth, currentDepth)).fold(frag())(frag(_, _))
       case None => UnitFrag(())
     }
 
@@ -101,35 +95,15 @@ object MarkdownParser {
     g(x)
   }
 
-  def convertHeading(n: node.Heading, isDigest: Boolean): (Seq[Modifier] => Frag) = {
-      if (isDigest) {
-        val x = n.getLevel() match {
-          case 1 =>
-            (x: Seq[scalatags.Text.Modifier]) =>
-              h2(a(href := s"""/blog/${this
-                .metadata("title")
-                .toLowerCase
-                .replace(' ', '-')}.html""")(x))
-          case 2 => h3(_)
-          case 3 => h4(_)
-          case 4 => h5(_)
-          case 5 => h6(_)
-          case 6 => h6(_)
-        }
-        x
-      } else {
-        n.getLevel() match {
-          case 1 => h1(_)
-          case 2 => h2(_)
-          case 3 => h3(_)
-          case 4 => h4(_)
-          case 5 => h5(_)
-          case 6 => h6(_)
-        }
-      }
+  def convertHeading(n: node.Heading): (Seq[Modifier] => Frag) = n.getLevel() match {
+    case 1 => h1(_)
+    case 2 => h2(_)
+    case 3 => h3(_)
+    case 4 => h4(_)
+    case 5 => h5(_)
+    case 6 => h6(_)
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.Null"))
   def getChildren(n: node.Node): Option[List[node.Node]] = n match {
     case null => None
     case n => {
@@ -137,7 +111,6 @@ object MarkdownParser {
     }
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.Null"))
   @tailrec
   def getSiblings(n: node.Node, result: List[node.Node]): List[node.Node] = n match {
     case null => result.reverse

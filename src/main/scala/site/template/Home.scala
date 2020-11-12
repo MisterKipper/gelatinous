@@ -1,7 +1,7 @@
 package gelatinous
 package site
 
-object Home extends Base {
+object Home extends Base with Renderable {
   import scalatags.Text.all._
   val pageTitle = "Home"
   val route = "/"
